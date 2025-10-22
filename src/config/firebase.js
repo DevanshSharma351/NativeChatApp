@@ -6,16 +6,15 @@ import storage from '@react-native-firebase/storage';
 import messaging from '@react-native-firebase/messaging';
 
 // Firebase configuration
-// IMPORTANT: Replace these with your actual Firebase project credentials
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  databaseURL: "YOUR_DATABASE_URL",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID",
-  measurementId: "YOUR_MEASUREMENT_ID"
+  apiKey: "AIzaSyDXYig2gbceEOMtBmJUvxXvcmKJ1FWM7Ts",
+  authDomain: "huddle-c6f52.firebaseapp.com",
+  databaseURL: "https://huddle-c6f52-default-rtdb.firebaseio.com",
+  projectId: "huddle-c6f52",
+  storageBucket: "huddle-c6f52.firebasestorage.app",
+  messagingSenderId: "950053755019",
+  appId: "1:950053755019:web:9279b91087611893ffdc8e",
+  measurementId: "G-TFZX810BQP"
 };
 
 // Initialize Firebase if not already initialized

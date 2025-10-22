@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "950053755019",
+    "project_id": "huddle-c6f52",
+    "storage_bucket": "huddle-c6f52.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:950053755019:android:8cd8f166c17803d0ffdc8e",
+        "android_client_info": {
+          "package_name": "com.nativechatapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYzqfGsdv9m0WYI2Q07YJftjurzZIn34s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
