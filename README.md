@@ -12,7 +12,7 @@ A feature-rich, real-time chat application built with **React Native** and **Fir
 
 <p align="center">
   <img src="screenshots/img1.png" width="300" alt="Screenshot 1">
-  <img src="screenshots/img2.png" width="300" alt="Screenshot 2">
+  <img src="screenshots/img2.jpeg" width="300" alt="Screenshot 2">
 </p>
 
 ## Features
