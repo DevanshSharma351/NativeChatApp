@@ -8,6 +8,13 @@ A feature-rich, real-time chat application built with **React Native** and **Fir
 ![React Native](https://img.shields.io/badge/React%20Native-0.74.5-61DAFB.svg)
 ![Firebase](https://img.shields.io/badge/Firebase-Latest-FFCA28.svg)
 
+## Screenshots
+
+<p align="center">
+  <img src="screenshots/img1.png" width="300" alt="Screenshot 1">
+  <img src="screenshots/img2.png" width="300" alt="Screenshot 2">
+</p>
+
 ## Features
 
 ### Implemented Features
