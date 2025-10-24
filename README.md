@@ -1,9 +1,11 @@
 # NativeChatApp - Real-Time Chat Application
 
+**Task ID:** NativeChatApp
+
 A feature-rich, real-time chat application built with **React Native** and **Firebase**. This app provides seamless messaging with online/offline status tracking, read receipts, live location sharing, typing indicators, and push notifications.
 
 ![App Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
-![React Native](https://img.shields.io/badge/React%20Native-0.72.6-61DAFB.svg)
+![React Native](https://img.shields.io/badge/React%20Native-0.74.5-61DAFB.svg)
 ![Firebase](https://img.shields.io/badge/Firebase-Latest-FFCA28.svg)
 
 ## Features
@@ -77,14 +79,9 @@ A feature-rich, real-time chat application built with **React Native** and **Fir
 
 ## Tech Stack
 
-- **Frontend:** React Native 0.72.6
+- **Frontend:** React Native 0.74.5
 - **Navigation:** React Navigation 6.x
-- **Backend:** Firebase
-  - Firebase Authentication
-  - Cloud Firestore (messages, user data)
-  - Realtime Database (presence, typing status)
-  - Cloud Storage (profile images)
-  - Cloud Messaging (push notifications)
+- **Backend:** Firebase (Authentication, Firestore, Realtime Database, Storage, Cloud Messaging)
 - **Maps:** React Native Maps
 - **Icons:** React Native Vector Icons
 - **Notifications:** Notifee
@@ -97,9 +94,8 @@ Before you begin, ensure you have the following installed:
 - Node.js (v16 or higher)
 - npm or yarn
 - React Native CLI
-- Xcode (for iOS development - macOS only)
 - Android Studio (for Android development)
-- CocoaPods (for iOS dependencies)
+- CocoaPods (for iOS dependencies - macOS only)
 
 ## Installation & Setup
 
@@ -116,187 +112,54 @@ cd NativeChatApp
 npm install
 # or
 yarn install
+
+# For iOS (macOS only)
+cd ios && pod install && cd ..
 ```
 
-### 3. Install iOS Dependencies (macOS only)
+### 3. Firebase Setup
 
-```bash
-cd ios
-pod install
-cd ..
-```
+1. Create a project at [Firebase Console](https://console.firebase.google.com/)
+2. Add iOS and Android apps to your Firebase project
+3. Download configuration files:
+   - **iOS:** `GoogleService-Info.plist` → place in `ios/NativeChatApp/`
+   - **Android:** `google-services.json` → place in `android/app/`
 
-### 4. Firebase Setup
+4. Enable these Firebase services:
+   - **Authentication** (Email/Password)
+   - **Cloud Firestore** (for messages and user data)
+   - **Realtime Database** (for presence and typing status)
+   - **Cloud Storage** (for profile images)
+   - **Cloud Messaging** (for push notifications)
 
-1. Go to [Firebase Console](https://console.firebase.google.com/)
-2. Create a new project (or use existing)
-3. Add iOS and Android apps to your Firebase project
-4. Download configuration files:
-   - **iOS:** Download `GoogleService-Info.plist` and place it in `ios/NativeChatApp/`
-   - **Android:** Download `google-services.json` and place it in `android/app/`
+5. Update Firebase security rules (see [Firebase documentation](https://firebase.google.com/docs/rules))
 
-5. Update Firebase configuration in `src/config/firebase.js`:
+### 4. Google Maps Setup
 
-```javascript
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  databaseURL: "YOUR_DATABASE_URL",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID",
-  measurementId: "YOUR_MEASUREMENT_ID"
-};
-```
-
-### 5. Enable Firebase Services
-
-In Firebase Console, enable the following services:
-
-1. **Authentication**
-   - Enable Email/Password authentication
-
-2. **Cloud Firestore**
-   - Create database in production mode
-   - Update security rules:
-
-```javascript
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /users/{userId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth.uid == userId;
-    }
-    match /chats/{chatId} {
-      allow read, write: if request.auth != null;
-      match /messages/{messageId} {
-        allow read, write: if request.auth != null;
-      }
-    }
-  }
-}
-```
-
-3. **Realtime Database**
-   - Create database
-   - Update security rules:
-
-```json
-{
-  "rules": {
-    "status": {
-      "$uid": {
-        ".read": true,
-        ".write": "$uid === auth.uid"
-      }
-    },
-    "typing": {
-      "$chatId": {
-        "$uid": {
-          ".read": true,
-          ".write": "$uid === auth.uid"
-        }
-      }
-    }
-  }
-}
-```
-
-4. **Cloud Storage**
-   - Enable storage
-   - Update security rules:
-
-```javascript
-rules_version = '2';
-service firebase.storage {
-  match /b/{bucket}/o {
-    match /profile_images/{imageId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null && request.resource.size < 5 * 1024 * 1024;
-    }
-  }
-}
-```
-
-5. **Cloud Messaging**
-   - Enable Cloud Messaging
-   - No additional setup required for basic notifications
-
-### 6. Google Maps Setup (for Location Sharing)
-
-#### Android
-
-1. Get a Google Maps API key from [Google Cloud Console](https://console.cloud.google.com/)
-2. Add the API key to `android/app/src/main/AndroidManifest.xml`:
-
-```xml
-<application>
-  ...
-  <meta-data
-    android:name="com.google.android.geo.API_KEY"
-    android:value="YOUR_GOOGLE_MAPS_API_KEY"/>
-</application>
-```
-
-#### iOS
-
-1. Add the API key to `ios/NativeChatApp/AppDelegate.mm`:
-
-```objective-c
-#import <GoogleMaps/GoogleMaps.h>
-
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{
-  [GMSServices provideAPIKey:@"YOUR_GOOGLE_MAPS_API_KEY"];
-  // ... rest of the code
-}
-```
-
-### 7. Permissions Setup
-
-#### Android (`android/app/src/main/AndroidManifest.xml`)
-
-```xml
-<uses-permission android:name="android.permission.INTERNET" />
-<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-<uses-permission android:name="android.permission.CAMERA" />
-<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-```
-
-#### iOS (`ios/NativeChatApp/Info.plist`)
-
-```xml
-<key>NSLocationWhenInUseUsageDescription</key>
-<string>We need your location to share it with your contacts</string>
-<key>NSCameraUsageDescription</key>
-<string>We need camera access to take profile photos</string>
-<key>NSPhotoLibraryUsageDescription</key>
-<string>We need photo library access to select profile photos</string>
-```
+1. Get API key from [Google Cloud Console](https://console.cloud.google.com/)
+2. **Android:** Add to `android/app/src/main/AndroidManifest.xml`
+   ```xml
+   <meta-data
+     android:name="com.google.android.geo.API_KEY"
+     android:value="YOUR_GOOGLE_MAPS_API_KEY"/>
+   ```
+3. **iOS:** Add to `ios/NativeChatApp/AppDelegate.mm`
+   ```objective-c
+   [GMSServices provideAPIKey:@"YOUR_GOOGLE_MAPS_API_KEY"];
+   ```
 
 ## Running the App
 
-### Start Metro Bundler
-
 ```bash
+# Start Metro bundler
 npm start
-# or
-yarn start
-```
 
-### Run on Android
-
-```bash
+# Run on Android
 npm run android
-# or
-yarn android
-```
 
-### Run on iOS (macOS only)
+# Run on iOS (macOS only)
+npm run ios
+```
 
 ```bash
 npm run ios
