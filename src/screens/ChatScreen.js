@@ -10,10 +10,11 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  Animated,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import moment from 'moment';
-import Geolocation from '@react-native-community/geolocation';
+// import Geolocation from '@react-native-community/geolocation';
 import { useAuth } from '../context/AuthContext';
 import ChatService from '../services/ChatService';
 
@@ -312,7 +313,7 @@ const ChatScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#E8E8ED',
   },
   headerTitle: {
     flexDirection: 'row',
@@ -323,55 +324,67 @@ const styles = StyleSheet.create({
     height: 36,
     borderRadius: 18,
     marginRight: 10,
+    borderWidth: 1.5,
+    borderColor: '#E5E5EA',
   },
   headerName: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
+    color: '#1C1C1E',
+    letterSpacing: -0.3,
   },
   headerStatus: {
     fontSize: 12,
-    color: '#666',
+    color: '#8E8E93',
   },
   messagesList: {
     padding: 16,
+    paddingBottom: 8,
   },
   messageContainer: {
     maxWidth: '75%',
     marginVertical: 4,
     padding: 12,
-    borderRadius: 16,
+    paddingHorizontal: 14,
+    borderRadius: 18,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   myMessage: {
     alignSelf: 'flex-end',
     backgroundColor: '#007AFF',
+    borderBottomRightRadius: 4,
   },
   otherMessage: {
     alignSelf: 'flex-start',
     backgroundColor: '#fff',
+    borderBottomLeftRadius: 4,
   },
   messageText: {
     fontSize: 16,
-    lineHeight: 20,
+    lineHeight: 22,
   },
   myMessageText: {
     color: '#fff',
   },
   otherMessageText: {
-    color: '#333',
+    color: '#1C1C1E',
   },
   messageFooter: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 4,
+    marginTop: 6,
     gap: 4,
   },
   messageTime: {
     fontSize: 11,
-    color: '#999',
+    color: '#8E8E93',
   },
   myMessageTime: {
-    color: '#e0e0e0',
+    color: 'rgba(255,255,255,0.7)',
   },
   doubleCheck: {
     flexDirection: 'row',
@@ -395,9 +408,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-end',
     padding: 12,
+    paddingBottom: 16,
     backgroundColor: '#fff',
-    borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
+    borderTopWidth: 0.5,
+    borderTopColor: '#E5E5EA',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 4,
   },
   actionButton: {
     padding: 8,
@@ -405,13 +424,15 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 20,
+    backgroundColor: '#F2F2F7',
+    borderRadius: 22,
     paddingHorizontal: 16,
     paddingVertical: 10,
     fontSize: 16,
     maxHeight: 100,
-    color: '#333',
+    color: '#1C1C1E',
+    borderWidth: 1,
+    borderColor: '#E5E5EA',
   },
   sendButton: {
     backgroundColor: '#007AFF',
@@ -421,9 +442,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 8,
+    shadowColor: '#007AFF',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
   },
   sendButtonDisabled: {
-    backgroundColor: '#ccc',
+    backgroundColor: '#C7C7CC',
+    shadowOpacity: 0,
   },
 });
 

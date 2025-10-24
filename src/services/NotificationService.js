@@ -8,6 +8,21 @@ class NotificationService {
     // Request permission
     await this.requestPermission();
     
+    // Ensure FCM auto init is enabled
+    try {
+      await messaging().setAutoInitEnabled(true);
+    } catch (e) {
+      console.warn('FCM setAutoInitEnabled failed:', e?.code || e?.message || e);
+    }
+
+    // On some devices this helps register for remote messages
+    try {
+      await messaging().registerDeviceForRemoteMessages();
+    } catch (e) {
+      // No-op on Android older versions; safe to ignore
+      console.warn('registerDeviceForRemoteMessages:', e?.code || e?.message || e);
+    }
+
     // Get FCM token
     const token = await this.getFCMToken();
     
@@ -36,10 +51,19 @@ class NotificationService {
   async getFCMToken() {
     try {
       const token = await messaging().getToken();
-      console.log('FCM Token:', token);
+      console.log('FCM Token retrieved successfully');
       return token;
     } catch (error) {
-      console.error('Error getting FCM token:', error);
+      console.error('Error getting FCM token:', error?.code || error?.message);
+      // Retry by deleting token and re-fetching
+      try {
+        await messaging().deleteToken();
+        const token = await messaging().getToken();
+        console.log('FCM Token retrieved after retry');
+        return token;
+      } catch (retryError) {
+        console.error('FCM token retry failed:', retryError?.code || retryError?.message);
+      }
       return null;
     }
   }

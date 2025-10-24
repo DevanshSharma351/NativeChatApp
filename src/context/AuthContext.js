@@ -90,7 +90,8 @@ export const AuthProvider = ({ children }) => {
 
       return { success: true };
     } catch (error) {
-      return { success: false, error: error.message };
+      console.error('Sign up error:', error?.code || error?.message);
+      return { success: false, error: error.message, code: error?.code };
     }
   };
 
@@ -99,7 +100,8 @@ export const AuthProvider = ({ children }) => {
       await auth().signInWithEmailAndPassword(email, password);
       return { success: true };
     } catch (error) {
-      return { success: false, error: error.message };
+      console.error('Sign in error:', error?.code || error?.message);
+      return { success: false, error: error.message, code: error?.code };
     }
   };
 

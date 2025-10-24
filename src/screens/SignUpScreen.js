@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -11,7 +11,9 @@ import {
   Platform,
   ScrollView,
   Image,
+  Animated,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { useAuth } from '../context/AuthContext';
 import storage from '@react-native-firebase/storage';
@@ -24,6 +26,25 @@ const SignUpScreen = ({ navigation }) => {
   const [photoURL, setPhotoURL] = useState(null);
   const [loading, setLoading] = useState(false);
   const { signUp } = useAuth();
+  
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(50)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: true,
+      }),
+      Animated.spring(slideAnim, {
+        toValue: 0,
+        tension: 20,
+        friction: 7,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
 
   const pickImage = () => {
     launchImageLibrary(
@@ -98,15 +119,31 @@ const SignUpScreen = ({ navigation }) => {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.content}>
+        <Animated.View 
+          style={[
+            styles.content,
+            {
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }],
+            },
+          ]}>
+          {/* App Logo */}
+          <View style={styles.logoContainer}>
+            <View style={styles.logoCircle}>
+              <Icon name="chatbubbles" size={32} color="#fff" />
+            </View>
+            <Text style={styles.appName}>Huddle</Text>
+          </View>
+
           <Text style={styles.title}>Create Account</Text>
-          <Text style={styles.subtitle}>Sign up to get started</Text>
+          <Text style={styles.subtitle}>Join Huddle to start chatting</Text>
 
           <TouchableOpacity style={styles.imagePicker} onPress={pickImage}>
             {photoURL ? (
               <Image source={{ uri: photoURL }} style={styles.profileImage} />
             ) : (
               <View style={styles.imagePlaceholder}>
+                <Icon name="person-add" size={40} color="#007AFF" />
                 <Text style={styles.imagePlaceholderText}>Add Photo</Text>
               </View>
             )}
@@ -178,7 +215,7 @@ const SignUpScreen = ({ navigation }) => {
               Already have an account? <Text style={styles.linkTextBold}>Sign In</Text>
             </Text>
           </TouchableOpacity>
-        </View>
+        </Animated.View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -187,26 +224,50 @@ const SignUpScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#FFFFFF',
   },
   scrollContent: {
     flexGrow: 1,
   },
   content: {
     flex: 1,
-    padding: 20,
+    padding: 24,
     justifyContent: 'center',
   },
-  title: {
-    fontSize: 32,
+  logoContainer: {
+    alignItems: 'center',
+    marginBottom: 32,
+  },
+  logoCircle: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: '#007AFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
+    shadowColor: '#007AFF',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 10,
+  },
+  appName: {
+    fontSize: 22,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#007AFF',
+    letterSpacing: 1,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#1C1C1E',
     marginBottom: 8,
     textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,
-    color: '#666',
+    color: '#8E8E93',
     marginBottom: 30,
     textAlign: 'center',
   },
@@ -218,28 +279,37 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
+    borderWidth: 3,
+    borderColor: '#007AFF',
   },
   imagePlaceholder: {
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: '#e0e0e0',
+    backgroundColor: '#F2F2F7',
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#007AFF',
+    borderStyle: 'dashed',
   },
   imagePlaceholderText: {
-    color: '#999',
-    fontSize: 14,
+    color: '#007AFF',
+    fontSize: 11,
+    fontWeight: '600',
+    marginTop: 4,
   },
   inputContainer: {
     marginBottom: 16,
   },
   input: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
+    backgroundColor: '#F2F2F7',
+    borderRadius: 14,
+    padding: 18,
     fontSize: 16,
-    color: '#333',
+    color: '#1C1C1E',
+    borderWidth: 1,
+    borderColor: '#E5E5EA',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,

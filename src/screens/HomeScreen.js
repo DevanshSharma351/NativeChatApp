@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Image,
   ActivityIndicator,
+  Animated,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import moment from 'moment';
@@ -38,48 +39,65 @@ const HomeScreen = ({ navigation }) => {
     });
   };
 
-  const renderChatItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.chatItem}
-      onPress={() =>
-        navigation.navigate('Chat', {
-          chatId: item.id,
-          otherUser: item.otherUser,
-        })
-      }>
-      <Image
-        source={
-          item.otherUser.photoURL
-            ? { uri: item.otherUser.photoURL }
-            : require('../assets/default-avatar.png')
-        }
-        style={styles.avatar}
-      />
-      <View style={styles.chatInfo}>
-        <View style={styles.chatHeader}>
-          <Text style={styles.chatName}>{item.otherUser.displayName}</Text>
-          <Text style={styles.chatTime}>
-            {formatTimestamp(item.lastMessageTime)}
-          </Text>
-        </View>
-        <View style={styles.chatPreview}>
-          <Text
-            style={[
-              styles.lastMessage,
-              item.unreadCount > 0 && styles.unreadMessage,
-            ]}
-            numberOfLines={1}>
-            {item.lastMessage || 'No messages yet'}
-          </Text>
-          {item.unreadCount > 0 && (
-            <View style={styles.unreadBadge}>
-              <Text style={styles.unreadCount}>{item.unreadCount}</Text>
+  const renderChatItem = ({ item, index }) => {
+    const scaleAnim = useRef(new Animated.Value(0)).current;
+    
+    useEffect(() => {
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        delay: index * 50,
+        tension: 50,
+        friction: 7,
+        useNativeDriver: true,
+      }).start();
+    }, []);
+
+    return (
+      <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+        <TouchableOpacity
+          style={styles.chatItem}
+          activeOpacity={0.7}
+          onPress={() =>
+            navigation.navigate('Chat', {
+              chatId: item.id,
+              otherUser: item.otherUser,
+            })
+          }>
+          <Image
+            source={
+              item.otherUser.photoURL
+                ? { uri: item.otherUser.photoURL }
+                : require('../assets/default-avatar.png')
+            }
+            style={styles.avatar}
+          />
+          <View style={styles.chatInfo}>
+            <View style={styles.chatHeader}>
+              <Text style={styles.chatName}>{item.otherUser.displayName}</Text>
+              <Text style={styles.chatTime}>
+                {formatTimestamp(item.lastMessageTime)}
+              </Text>
             </View>
-          )}
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
+            <View style={styles.chatPreview}>
+              <Text
+                style={[
+                  styles.lastMessage,
+                  item.unreadCount > 0 && styles.unreadMessage,
+                ]}
+                numberOfLines={1}>
+                {item.lastMessage || 'No messages yet'}
+              </Text>
+              {item.unreadCount > 0 && (
+                <View style={styles.unreadBadge}>
+                  <Text style={styles.unreadCount}>{item.unreadCount}</Text>
+                </View>
+              )}
+            </View>
+          </View>
+        </TouchableOpacity>
+      </Animated.View>
+    );
+  };
 
   if (loading) {
     return (
@@ -123,27 +141,34 @@ const HomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#F2F2F7',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#F2F2F7',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 16,
+    padding: 20,
+    paddingTop: 16,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    borderBottomColor: '#E5E5EA',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
   },
   headerTitle: {
-    fontSize: 28,
+    fontSize: 34,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#1C1C1E',
+    letterSpacing: 0.5,
   },
   newChatButton: {
     padding: 8,
@@ -155,14 +180,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 16,
     backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#E5E5EA',
+    marginHorizontal: 8,
+    marginVertical: 4,
+    borderRadius: 12,
   },
   avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     marginRight: 12,
+    borderWidth: 2,
+    borderColor: '#F2F2F7',
   },
   chatInfo: {
     flex: 1,
@@ -171,16 +201,17 @@ const styles = StyleSheet.create({
   chatHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 4,
+    marginBottom: 6,
   },
   chatName: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '600',
-    color: '#333',
+    color: '#1C1C1E',
+    letterSpacing: -0.4,
   },
   chatTime: {
-    fontSize: 12,
-    color: '#999',
+    fontSize: 13,
+    color: '#8E8E93',
   },
   chatPreview: {
     flexDirection: 'row',
@@ -188,27 +219,33 @@ const styles = StyleSheet.create({
   },
   lastMessage: {
     flex: 1,
-    fontSize: 14,
-    color: '#666',
+    fontSize: 15,
+    color: '#8E8E93',
+    lineHeight: 20,
   },
   unreadMessage: {
     fontWeight: '600',
-    color: '#333',
+    color: '#1C1C1E',
   },
   unreadBadge: {
     backgroundColor: '#007AFF',
-    borderRadius: 10,
-    minWidth: 20,
-    height: 20,
+    borderRadius: 12,
+    minWidth: 24,
+    height: 24,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 6,
+    paddingHorizontal: 8,
     marginLeft: 8,
+    shadowColor: '#007AFF',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
   },
   unreadCount: {
     color: '#fff',
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   emptyContainer: {
     flex: 1,
@@ -217,16 +254,18 @@ const styles = StyleSheet.create({
     padding: 40,
   },
   emptyText: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '600',
-    color: '#666',
+    color: '#1C1C1E',
     marginTop: 16,
+    letterSpacing: -0.4,
   },
   emptySubtext: {
-    fontSize: 14,
-    color: '#999',
+    fontSize: 15,
+    color: '#8E8E93',
     marginTop: 8,
     textAlign: 'center',
+    lineHeight: 22,
   },
 });
 
