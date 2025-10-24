@@ -1,4 +1,4 @@
-# NativeChatApp - Real-Time Chat Application
+# Huddle - Real-Time Chat Application
 
 **Task ID:** NativeChatApp
 
